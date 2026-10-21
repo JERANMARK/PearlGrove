@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  id        String   @id
+  email     String   @unique(map: "Admin_email_key")
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model category {
+  id          String    @id
+  name        String    @unique(map: "Category_name_key")
+  description String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    product[]
+}
+
+model order {
+  id                String      @id
+  customerName      String
+  customerPhone     String
+  customerAddress   String?     @db.Text
+  businessType      String?
+  message           String?     @db.Text
+  selectedVarieties String?     @db.Text
+  totalAmount       Decimal     @default(0) @db.Decimal(12, 2)
+  status            String      @default("PENDING")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  idempotencyKey    String?     @unique(map: "Order_idempotencyKey_key")
+  payloadHash       String?     @db.VarChar(64)
+  orderItems        orderitem[]
+}
+
+model orderitem {
+  id        String   @id
+  orderId   String
+  productId String?
+  quantity  Int      @default(1)
+  price     Decimal  @default(0) @db.Decimal(12, 2)
+  subtotal  Decimal  @default(0) @db.Decimal(12, 2)
+  order     order    @relation(fields: [orderId], references: [id], onDelete: Cascade, map: "OrderItem_orderId_fkey")
+  product   product? @relation(fields: [productId], references: [id], map: "OrderItem_productId_fkey")
+
+  @@index([orderId], map: "OrderItem_orderId_idx")
+  @@index([productId], map: "OrderItem_productId_idx")
+}
+
+model product {
+  id            String      @id
+  name          String
+  description   String      @db.Text
+  notes         String?
+  image         String      @db.Text
+  price         Decimal     @default(0) @db.Decimal(12, 2)
+  discountPrice Decimal?    @db.Decimal(12, 2)
+  stock         Int         @default(0)
+  isAvailable   Boolean     @default(true)
+  isFeatured    Boolean     @default(false)
+  profile       String?
+  bestSuitedFor String?     @db.Text
+  categoryId    String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  orderItems    orderitem[]
+  category      category?   @relation(fields: [categoryId], references: [id], map: "Product_categoryId_fkey")
+
+  @@index([categoryId], map: "Product_categoryId_idx")
+}
+
+model setting {
+  id        String   @id
+  key       String   @unique(map: "Setting_key_key")
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}

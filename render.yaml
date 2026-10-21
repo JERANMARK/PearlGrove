@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: pearl-grow-backend
+    env: node
+    plan: free
+    region: oregon
+    # Login throttling uses process memory; keep one instance until a shared store is configured.
+    numInstances: 1
+    buildCommand: |
+      cd backend && npm ci && npx prisma generate
+    startCommand: |
+      cd backend && npm start
+    healthCheckPath: /api/ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: WHATSAPP_NUMBER
+        value: "94715498142"
+      - key: UPLOADS_DIR
+        sync: false
+      - key: UPLOADS_PERSISTENT
+        sync: false
+      - key: PUBLIC_API_URL
+        sync: false

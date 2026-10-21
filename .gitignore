@@ -1,0 +1,54 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env
+backend/.env.local
+backend/.env.*.local
+
+# Local MySQL data, database backups, and private keys
+/mysql-local/data/
+/backups/
+/db-backups/
+/database-backups/
+*.sql.gz
+*.dump
+*.dump.gz
+*.bak
+*.backup
+*dump*.sql
+*backup*.sql
+**/private_key.pem
+**/private-key.pem
+**/*-key.pem
+**/*_key.pem
+*.key
+*.p12
+*.pfx
