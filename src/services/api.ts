@@ -38,15 +38,25 @@ const normalizeMoneyValues = (value: any): any => {
   }));
 };
 
-// Generic fetch wrapper with error handling
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000;
+const RETRYABLE_STATUS_CODES = [408, 429, 500, 502, 503, 504];
+const RETRYABLE_ERRORS = ['ECONNRESET', 'ETIMEDOUT', 'ENOTFOUND', 'EAI_AGAIN'];
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Generic fetch wrapper with retry logic and error handling
 export async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  retryCount: number = 0
 ): Promise<{ success: boolean; data?: T; error?: string; [key: string]: any }> {
   const url = `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
   
   const headers = {
     'Content-Type': 'application/json',
+    'X-Request-ID': crypto.randomUUID(),
     ...options.headers,
   };
 
@@ -55,6 +65,15 @@ export async function apiFetch<T>(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
+      // Check if this is a retryable error
+      const isRetryable = RETRYABLE_STATUS_CODES.includes(res.status) && retryCount < MAX_RETRIES;
+      
+      if (isRetryable) {
+        const delay = RETRY_DELAY_MS * Math.pow(2, retryCount); // Exponential backoff
+        await sleep(delay);
+        return apiFetch<T>(endpoint, options, retryCount + 1);
+      }
+
       if (res.status === 401 && !endpoint.includes('/login')) {
         // Clear cached identity and let the auth provider return to login.
         localStorage.removeItem('pearl_admin_user');
@@ -68,6 +87,15 @@ export async function apiFetch<T>(
 
     return normalizeMoneyValues(data);
   } catch (err: any) {
+    // Check if this is a retryable network error
+    const isRetryable = RETRYABLE_ERRORS.some(code => err.message?.includes(code)) && retryCount < MAX_RETRIES;
+    
+    if (isRetryable) {
+      const delay = RETRY_DELAY_MS * Math.pow(2, retryCount); // Exponential backoff
+      await sleep(delay);
+      return apiFetch<T>(endpoint, options, retryCount + 1);
+    }
+
     return {
       success: false,
       error: err.message || 'Network error. Server may be offline.',

@@ -190,6 +190,20 @@ export const AdminProductForm: React.FC = () => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Client-side file size validation (5MB limit)
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size > MAX_FILE_SIZE) {
+      setImageUploadError('File size exceeds 5MB limit. Please choose a smaller image.');
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      setImageUploadError('Only JPG, PNG, and WEBP images are allowed.');
+      return;
+    }
+
     setUploadingImage(true);
     setImageUploadError(null);
 

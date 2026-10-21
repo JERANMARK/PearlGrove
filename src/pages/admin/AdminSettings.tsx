@@ -35,6 +35,23 @@ export const AdminSettings: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  // Password strength calculation
+  const getPasswordStrength = (password: string): { score: number; label: string; color: string } => {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (password.length >= 12) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^a-zA-Z0-9]/.test(password)) score++;
+
+    if (score <= 2) return { score, label: 'Weak', color: 'bg-red-500' };
+    if (score <= 4) return { score, label: 'Medium', color: 'bg-yellow-500' };
+    return { score, label: 'Strong', color: 'bg-green-500' };
+  };
+
+  const passwordStrength = getPasswordStrength(newPassword);
+
   // Notifications
   const [businessFeedback, setBusinessFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [passwordFeedback, setPasswordFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -378,8 +395,26 @@ export const AdminSettings: React.FC = () => {
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="••••••••••••"
               required
+              aria-label="New password"
+              aria-describedby="password-strength"
               className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500"
             />
+            {newPassword && (
+              <div className="mt-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-300 ${passwordStrength.color}`}
+                      style={{ width: `${(passwordStrength.score / 6) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] font-medium text-slate-600">{passwordStrength.label}</span>
+                </div>
+                <p className="text-[10px] text-slate-500" id="password-strength">
+                  Use 12+ characters with mix of letters, numbers, and symbols
+                </p>
+              </div>
+            )}
           </div>
 
           <div>
