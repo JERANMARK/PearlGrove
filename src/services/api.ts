@@ -10,7 +10,9 @@ const isValidProductionApiUrl = (() => {
   } catch { return false; }
 })();
 if (import.meta.env.PROD && !isValidProductionApiUrl) {
-  throw new Error('VITE_API_URL must be the HTTPS production API origin ending in /api.');
+  console.warn('VITE_API_URL not configured. Backend must be deployed before API calls will work.');
+  // Temporarily allow empty VITE_API_URL for initial frontend deployment
+  // TODO: Set VITE_API_URL after backend is deployed
 }
 const API_BASE = (configuredApiUrl || 'http://localhost:5000/api').replace(/\/$/, '');
 export const resolveApiImageUrl = (value?: string | null) => {
