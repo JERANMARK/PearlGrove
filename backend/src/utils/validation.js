@@ -84,8 +84,8 @@ export const validateProductionConfig = (env) => {
       || hostname === '::'
       || hostname === '0.0.0.0'
       || /^127(?:\.\d{1,3}){3}$/.test(hostname);
-    if (databaseUrl.protocol !== 'mysql:' || !hostname || isLoopback || databaseUrl.pathname.length < 2 || !databaseUrl.username || !databaseUrl.password) errors.push('DATABASE_URL must point to a non-local MySQL database, include a database name, and contain credentials.');
-  } catch { errors.push('DATABASE_URL must be a valid MySQL connection URL.'); }
+    if ((databaseUrl.protocol !== 'mysql:' && databaseUrl.protocol !== 'postgresql:') || !hostname || isLoopback || databaseUrl.pathname.length < 2 || !databaseUrl.username || !databaseUrl.password) errors.push('DATABASE_URL must point to a non-local MySQL or PostgreSQL database, include a database name, and contain credentials.');
+  } catch { errors.push('DATABASE_URL must be a valid MySQL or PostgreSQL connection URL.'); }
   const origins = (env.FRONTEND_URL || '').split(',').map((value) => value.trim()).filter(Boolean);
   if (origins.length === 0 || origins.some((value) => {
     try {
