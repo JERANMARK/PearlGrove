@@ -6,7 +6,9 @@ const PRODUCT_FIELDS = new Set(['name', 'description', 'notes', 'image', 'price'
 const textRules = { name: { required: true, max: 120 }, description: { required: true, max: 10000 }, notes: { max: 1000 }, image: { required: true, max: 2048 }, profile: { max: 500 }, bestSuitedFor: { max: 2000 } };
 const invalid = (res, error) => res.status(400).json({ success: false, error });
 const validImageReference = (value) => {
-  if (typeof value !== 'string' || value.length > 2048 || value.includes('\\') || value.split('/').some((part) => part === '.' || part === '..')) return false;
+  if (typeof value !== 'string') return false;
+  value = value.trim();
+  if (!value || value.length > 2048 || value.includes('\\') || value.split('/').some((part) => part === '.' || part === '..')) return false;
   if (value.startsWith('/images/')) return true;
   try { return new URL(value).protocol === 'https:'; } catch { return false; }
 };

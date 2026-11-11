@@ -9,12 +9,13 @@ const isValidProductionApiUrl = (() => {
     return parsed.protocol === 'https:' && parsed.pathname.replace(/\/$/, '') === '/api' && !parsed.search && !parsed.hash && !parsed.username && !parsed.password && !localHost;
   } catch { return false; }
 })();
+const LOCAL_API_URL = 'http://localhost:5000/api';
 if (import.meta.env.PROD && !isValidProductionApiUrl) {
-  console.warn('VITE_API_URL not configured. Backend must be deployed before API calls will work.');
-  // Temporarily allow empty VITE_API_URL for initial frontend deployment
-  // TODO: Set VITE_API_URL after backend is deployed
+  console.error('VITE_API_URL is missing or invalid in production. Configure the deployed backend API URL before redeploying the frontend.');
 }
-const API_BASE = (configuredApiUrl || 'http://localhost:5000/api').replace(/\/$/, '');
+const API_BASE = import.meta.env.DEV
+  ? (configuredApiUrl || LOCAL_API_URL).replace(/\/$/, '')
+  : (configuredApiUrl || '/api').replace(/\/$/, '');
 export const resolveApiImageUrl = (value?: string | null) => {
   if (!value) return '/images/Radish.jpg';
   if (/^https?:\/\//i.test(value)) return value;

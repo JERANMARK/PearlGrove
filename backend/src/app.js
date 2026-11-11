@@ -132,12 +132,12 @@ const upload = multer({
     fields: 10, // Max 10 fields
   },
   fileFilter: (_req, file, cb) => {
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/gif', 'image/bmp', 'image/x-ms-bmp', 'image/avif'];
     if (allowed.includes(file.mimetype)) {
       cb(null, true);
       return;
     }
-    const error = new Error('Only JPG, PNG, and WEBP images are allowed.');
+    const error = new Error('Only JPEG, PNG, WEBP, GIF, BMP, and AVIF images are allowed.');
     error.statusCode = 400;
     cb(error);
   },
@@ -341,8 +341,7 @@ app.post('/api/admin/upload-image', authMiddleware, upload.single('image'), asyn
     await fs.promises.rm(destination, { force: true }).catch(() => {});
     return next(error);
   }
-  const apiBase = process.env.PUBLIC_API_URL ? process.env.PUBLIC_API_URL.replace(/\/$/, '') : 'http://localhost:5000';
-  const imageUrl = `${apiBase}/images/uploads/${filename}`;
+  const imageUrl = `/images/uploads/${filename}`;
 
   return res.status(200).json({
     success: true,

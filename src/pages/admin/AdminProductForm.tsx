@@ -198,9 +198,9 @@ export const AdminProductForm: React.FC = () => {
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/gif', 'image/bmp', 'image/x-ms-bmp', 'image/avif'];
     if (!allowedTypes.includes(file.type)) {
-      setImageUploadError('Only JPG, PNG, and WEBP images are allowed.');
+      setImageUploadError('Only JPEG, PNG, WEBP, GIF, BMP, and AVIF images are allowed.');
       return;
     }
 
@@ -602,7 +602,7 @@ export const AdminProductForm: React.FC = () => {
                 </label>
                 <input
                   type="file"
-                  accept="image/png,image/jpeg,image/webp,image/jpg"
+                  accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/x-ms-bmp,image/avif"
                   onChange={handleImageUpload}
                   className="block w-full text-[11px] text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-emerald-600 file:text-white file:text-[11px] file:font-semibold hover:file:bg-emerald-700"
                 />

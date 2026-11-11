@@ -1,88 +1,69 @@
 import { motion } from 'framer-motion';
 import { brandData } from '../data/brand';
-import { Leaf, Heart, Droplet, Sprout } from 'lucide-react';
 
 const AboutSection = () => {
   return (
-    <section id="about" className="py-24 md:py-32 bg-[#faf8f2] relative overflow-hidden">
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-14 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <p className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-leaf-700 mb-4">
-            About Pearl Grove
-          </p>
-          <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-forest-900 leading-tight font-medium max-w-4xl mx-auto">
-            Quality. Freshness. Care.
-          </h2>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-8">
+    <section id="about" className="py-28 md:py-32 bg-cream-50">
+      <div className="max-w-[1160px] mx-auto px-5 sm:px-8 lg:px-10 xl:px-0">
+        <div className="grid lg:grid-cols-[1.3fr_0.9fr] gap-12 lg:gap-16 items-start">
+          {/* Content */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
+            transition={{ duration: 0.6 }}
+            className="space-y-7"
           >
-            <div className="w-16 h-16 bg-leaf-100 rounded-full flex items-center justify-center mb-6">
-              <Leaf className="w-8 h-8 text-leaf-600" />
+            <p className="font-body text-sm text-leaf-700 mb-2">About Pearl Grove</p>
+
+            <h2 className="font-display text-5xl md:text-6xl lg:text-[4.1rem] text-forest-900 leading-[0.98] font-medium max-w-[680px]">
+              Rooted in the hill country
+              <br />
+              of Upcot, Maskeliya
+            </h2>
+
+            <div className="space-y-5 max-w-[650px] pt-6">
+              <p className="font-body text-forest-800 text-lg leading-relaxed">
+                Pearl Grove is a Sri Lankan fresh-produce brand created with a simple purpose — to grow fresh, high-quality produce with care and bring it closer to modern kitchens. We begin our journey with a carefully selected range of premium microgreens.
+              </p>
+
+              <p className="font-body text-forest-800 text-lg leading-relaxed">
+                We focus on freshness, quality, careful cultivation and consistent supply. Every tray receives close attention from seed to harvest, with the aim of delivering vibrant colour, fresh flavour, appealing texture and beautiful presentation.
+              </p>
+
+              <p className="font-body text-forest-800 text-lg leading-relaxed">
+                Our vision extends beyond microgreens. As the brand grows, we aim to expand into fresh vegetables, herbs and specialty produce — while staying connected to responsible growing practices and the natural character of Sri Lanka&apos;s hill country.
+              </p>
             </div>
-            <h3 className="font-display text-2xl text-forest-900 font-semibold mb-4">Quality</h3>
-            <p className="font-body text-forest-700 leading-relaxed">
-              Every microgreen is carefully cultivated using premium seeds and sustainable growing methods to ensure the highest quality standards.
-            </p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
+            transition={{ duration: 0.6 }}
+            className="pt-16"
           >
-            <div className="w-16 h-16 bg-leaf-100 rounded-full flex items-center justify-center mb-6">
-              <Droplet className="w-8 h-8 text-leaf-600" />
+            <div className="border-t border-forest-900/15 py-7">
+              <h3 className="font-body text-sm font-bold text-forest-900 mb-3">Our Vision</h3>
+              <p className="font-body text-forest-700 text-lg leading-relaxed">
+                To grow Pearl Grove into a trusted Sri Lankan fresh-produce brand known for quality, freshness and responsible cultivation.
+              </p>
             </div>
-            <h3 className="font-display text-2xl text-forest-900 font-semibold mb-4">Freshness</h3>
-            <p className="font-body text-forest-700 leading-relaxed">
-              Harvested daily and delivered fresh to your kitchen, our microgreens retain maximum flavor, nutrition, and vibrant color.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <div className="w-16 h-16 bg-leaf-100 rounded-full flex items-center justify-center mb-6">
-              <Heart className="w-8 h-8 text-leaf-600" />
+            <div className="border-t border-forest-900/15 py-7">
+              <h3 className="font-body text-sm font-bold text-forest-900 mb-3">Our Mission</h3>
+              <p className="font-body text-forest-700 text-lg leading-relaxed">
+                To carefully grow and deliver fresh, high-quality produce that supports healthier living and provides chefs, businesses and consumers with ingredients they can rely on.
+              </p>
             </div>
-            <h3 className="font-display text-2xl text-forest-900 font-semibold mb-4">Care</h3>
-            <p className="font-body text-forest-700 leading-relaxed">
-              From seed to harvest, each tray receives personal attention and care, ensuring consistency and excellence in every batch.
-            </p>
+            <div className="border-t border-forest-900/15 pt-7">
+              <h3 className="font-body text-sm font-bold text-forest-900 mb-4">Our Brand Promise</h3>
+              <p className="font-display italic text-3xl md:text-4xl text-leaf-700 leading-tight">
+                {brandData.tagline}
+              </p>
+            </div>
           </motion.div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-16 bg-gradient-to-br from-[#1b3827] to-[#12281b] rounded-2xl p-8 md:p-12 text-center"
-        >
-          <Sprout className="w-12 h-12 text-leaf-300 mx-auto mb-6" />
-          <p className="font-display italic text-3xl sm:text-4xl text-cream-50 leading-tight max-w-3xl mx-auto">
-            {brandData.tagline}
-          </p>
-        </motion.div>
       </div>
     </section>
   );

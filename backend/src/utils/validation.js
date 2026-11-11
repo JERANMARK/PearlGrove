@@ -110,10 +110,22 @@ export const validOptionalBoolean = (value) => value === undefined || typeof val
 
 export const getVerifiedImageType = (mimeType, buffer) => {
   if (!Buffer.isBuffer(buffer)) return null;
+  const isAvif = () => {
+    if (buffer.length < 12 || buffer.toString('ascii', 4, 8) !== 'ftyp') return false;
+    for (let offset = 8; offset + 4 <= Math.min(buffer.length, 64); offset += 4) {
+      if (['avif', 'avis'].includes(buffer.toString('ascii', offset, offset + 4))) return true;
+    }
+    return false;
+  };
   const types = {
     'image/jpeg': { extension: '.jpg', valid: (b) => b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
+    'image/jpg': { extension: '.jpg', valid: (b) => b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
     'image/png': { extension: '.png', valid: (b) => b.length >= 8 && b.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) },
     'image/webp': { extension: '.webp', valid: (b) => b.length >= 12 && b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP' },
+    'image/gif': { extension: '.gif', valid: (b) => b.length >= 6 && ['GIF87a', 'GIF89a'].includes(b.toString('ascii', 0, 6)) },
+    'image/bmp': { extension: '.bmp', valid: (b) => b.length >= 14 && b.toString('ascii', 0, 2) === 'BM' },
+    'image/x-ms-bmp': { extension: '.bmp', valid: (b) => b.length >= 14 && b.toString('ascii', 0, 2) === 'BM' },
+    'image/avif': { extension: '.avif', valid: isAvif },
   };
   const type = types[mimeType];
   return type?.valid(buffer) ? type : null;
@@ -239,4 +251,3 @@ export const sanitizeObject = (obj) => {
   
   return sanitized;
 };
-

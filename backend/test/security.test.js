@@ -104,6 +104,8 @@ test('concurrent identical order retries create one order; a changed payload con
 
 test('product and category payload validators reject malformed writes', () => {
   assert.equal(validateProductPayload({ name: 'Radish', description: 'Green', image: '/images/Radish.jpg', price: '2.50', stock: 4, isAvailable: false }, true), null);
+  assert.equal(validateProductPayload({ name: 'Radish', description: 'Green', image: ' /images/uploads/product.avif ', price: '2.50' }, true), null);
+  assert.equal(validateProductPayload({ name: 'Radish', description: 'Green', image: 'https://images.example.com/product.gif', price: '2.50' }, true), null);
   assert.match(validateProductPayload({ name: 'Radish', description: 'Green', image: '/images/Radish.jpg', price: '2.50abc' }, true), /Price/);
   assert.match(validateProductPayload({ name: 'Radish', description: 'Green', image: '/images/Radish.jpg', price: 3, discountPrice: 3 }, true), /Discount/);
   assert.match(validateProductPayload({ name: 'Radish', description: 'Green', image: '/images/Radish.jpg', price: 3, isAvailable: 'false' }, true), /booleans/);
@@ -204,6 +206,9 @@ test('image upload checks MIME against file signatures', () => {
   assert.equal(getVerifiedImageType('image/png', pngHeader)?.extension, '.png');
   assert.equal(getVerifiedImageType('image/jpeg', pngHeader), null);
   assert.equal(getVerifiedImageType('image/svg+xml', Buffer.from('<svg/>')), null);
+  assert.equal(getVerifiedImageType('image/gif', Buffer.from('GIF89a'))?.extension, '.gif');
+  assert.equal(getVerifiedImageType('image/bmp', Buffer.from('BM' + '\0'.repeat(12)))?.extension, '.bmp');
+  assert.equal(getVerifiedImageType('image/avif', Buffer.from('\0\0\0\x18ftypavif'))?.extension, '.avif');
 });
 
 test('login throttling blocks repeated attempts for one IP and account without exposing the account', () => {
