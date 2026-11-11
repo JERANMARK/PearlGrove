@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { createHash } from 'node:crypto';
 
 export const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -96,12 +95,19 @@ export const validateProductionConfig = (env) => {
   return errors;
 };
 
-export const validateProductionUploadConfig = ({ nodeEnv, uploadsDir, publicApiUrl, persistent }) => {
-  if (nodeEnv !== 'production') return true;
-  if (persistent !== 'true' || typeof uploadsDir !== 'string' || !uploadsDir.trim() || !path.isAbsolute(uploadsDir)) return false;
+export const validateSupabaseStorageConfig = ({ supabaseUrl, supabaseSecretKey, supabaseBucket }) => {
+  if (typeof supabaseSecretKey !== 'string' || !supabaseSecretKey.trim() || supabaseBucket !== 'product-images') return false;
   try {
-    const url = new URL(publicApiUrl || '');
-    return url.protocol === 'https:' && url.origin === publicApiUrl && !url.username && !url.password;
+    const url = new URL(supabaseUrl || '');
+    const isSupabaseProjectHost = /^[a-z0-9]{20}\.supabase\.co$/.test(url.hostname);
+    return url.protocol === 'https:'
+      && isSupabaseProjectHost
+      && !url.port
+      && url.pathname === '/'
+      && !url.search
+      && !url.hash
+      && !url.username
+      && !url.password;
   } catch { return false; }
 };
 
@@ -118,14 +124,14 @@ export const getVerifiedImageType = (mimeType, buffer) => {
     return false;
   };
   const types = {
-    'image/jpeg': { extension: '.jpg', valid: (b) => b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
-    'image/jpg': { extension: '.jpg', valid: (b) => b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
-    'image/png': { extension: '.png', valid: (b) => b.length >= 8 && b.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) },
-    'image/webp': { extension: '.webp', valid: (b) => b.length >= 12 && b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP' },
-    'image/gif': { extension: '.gif', valid: (b) => b.length >= 6 && ['GIF87a', 'GIF89a'].includes(b.toString('ascii', 0, 6)) },
-    'image/bmp': { extension: '.bmp', valid: (b) => b.length >= 14 && b.toString('ascii', 0, 2) === 'BM' },
-    'image/x-ms-bmp': { extension: '.bmp', valid: (b) => b.length >= 14 && b.toString('ascii', 0, 2) === 'BM' },
-    'image/avif': { extension: '.avif', valid: isAvif },
+    'image/jpeg': { extension: '.jpg', mimeType: 'image/jpeg', valid: (b) => b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
+    'image/jpg': { extension: '.jpg', mimeType: 'image/jpeg', valid: (b) => b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
+    'image/png': { extension: '.png', mimeType: 'image/png', valid: (b) => b.length >= 8 && b.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) },
+    'image/webp': { extension: '.webp', mimeType: 'image/webp', valid: (b) => b.length >= 12 && b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP' },
+    'image/gif': { extension: '.gif', mimeType: 'image/gif', valid: (b) => b.length >= 6 && ['GIF87a', 'GIF89a'].includes(b.toString('ascii', 0, 6)) },
+    'image/bmp': { extension: '.bmp', mimeType: 'image/bmp', valid: (b) => b.length >= 14 && b.toString('ascii', 0, 2) === 'BM' },
+    'image/x-ms-bmp': { extension: '.bmp', mimeType: 'image/bmp', valid: (b) => b.length >= 14 && b.toString('ascii', 0, 2) === 'BM' },
+    'image/avif': { extension: '.avif', mimeType: 'image/avif', valid: isAvif },
   };
   const type = types[mimeType];
   return type?.valid(buffer) ? type : null;

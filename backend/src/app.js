@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import fs from 'fs';
 import zlib from 'zlib';
 import multer from 'multer';
+import { createClient } from '@supabase/supabase-js';
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
@@ -12,7 +12,7 @@ import dashboardRoutes from './routes/dashboardRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
-import { getVerifiedImageType, validateProductionUploadConfig } from './utils/validation.js';
+import { getVerifiedImageType, validateSupabaseStorageConfig } from './utils/validation.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
@@ -23,6 +23,16 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 dotenv.config();
+
+const supabaseStorageConfig = {
+  supabaseUrl: process.env.SUPABASE_URL,
+  supabaseSecretKey: process.env.SUPABASE_SECRET_KEY,
+  supabaseBucket: process.env.SUPABASE_BUCKET,
+};
+const isSupabaseStorageConfigured = validateSupabaseStorageConfig(supabaseStorageConfig);
+const supabase = isSupabaseStorageConfigured
+  ? createClient(supabaseStorageConfig.supabaseUrl, supabaseStorageConfig.supabaseSecretKey)
+  : null;
 
 // Structured Logger
 const logger = {
@@ -320,7 +330,7 @@ app.get('/api/ready', async (req, res) => {
   }
 });
 
-app.post('/api/admin/upload-image', authMiddleware, upload.single('image'), async (req, res, next) => {
+app.post('/api/admin/upload-image', authMiddleware, upload.single('image'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({
       success: false,
@@ -329,19 +339,40 @@ app.post('/api/admin/upload-image', authMiddleware, upload.single('image'), asyn
   }
   const type = getVerifiedImageType(req.file.mimetype, req.file.buffer);
   if (!type) return res.status(400).json({ success: false, error: 'Uploaded file content does not match a supported image type.' });
-  if (!validateProductionUploadConfig({ nodeEnv: process.env.NODE_ENV, uploadsDir: process.env.UPLOADS_DIR, publicApiUrl: process.env.PUBLIC_API_URL, persistent: process.env.UPLOADS_PERSISTENT })) {
-    return res.status(503).json({ success: false, error: 'Image uploads are not configured for persistent production storage.' });
+  if (!isSupabaseStorageConfigured || !supabase) {
+    return res.status(503).json({ success: false, error: 'Image uploads are not configured for Supabase Storage.' });
   }
   const filename = `${randomUUID()}${type.extension}`;
-  const destination = path.resolve(publicImagesDir, filename);
+  let data;
   try {
-    await fs.promises.mkdir(publicImagesDir, { recursive: true });
-    await fs.promises.writeFile(destination, req.file.buffer, { flag: 'wx', mode: 0o644 });
-  } catch (error) {
-    await fs.promises.rm(destination, { force: true }).catch(() => {});
-    return next(error);
+    const result = await supabase.storage
+      .from(supabaseStorageConfig.supabaseBucket)
+      .upload(filename, req.file.buffer, {
+        contentType: type.mimeType,
+        upsert: false,
+      });
+    if (result.error || !result.data?.path) {
+      logger.error('Supabase image upload failed', null, { requestId: req.id });
+      return res.status(502).json({
+        success: false,
+        error: 'Image upload failed. Please try again.',
+        requestId: req.id,
+      });
+    }
+    data = result.data;
+  } catch {
+    logger.error('Supabase image upload failed', null, { requestId: req.id });
+    return res.status(502).json({
+      success: false,
+      error: 'Image upload failed. Please try again.',
+      requestId: req.id,
+    });
   }
-  const imageUrl = `/images/uploads/${filename}`;
+
+  const { data: publicUrlData } = supabase.storage
+    .from(supabaseStorageConfig.supabaseBucket)
+    .getPublicUrl(data.path);
+  const imageUrl = publicUrlData.publicUrl;
 
   return res.status(200).json({
     success: true,
