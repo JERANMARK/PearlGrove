@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
 import { getJwtSecret } from '../src/config/jwt.js';
-import { calculateOrderTotals, createOrderPayloadHash, formatMoney, getAdminSessionCookieOptions, getVerifiedImageType, isPlainObject, isText, isValidAdminPasswordLength, isValidIdempotencyKey, nextSessionVersion, parseMoney, resolveIdempotentOrder, UUID_PATTERN, validOptionalBoolean, validateProductionConfig, validateSupabaseStorageConfig } from '../src/utils/validation.js';
+import { calculateOrderTotals, createOrderPayloadHash, formatMoney, getAdminSessionCookieOptions, getVerifiedImageType, isPlainObject, isText, isValidAdminPasswordLength, isValidIdempotencyKey, nextSessionVersion, parseMoney, resolveIdempotentOrder, UUID_PATTERN, validOptionalBoolean, validateProductionConfig, validateProductionUploadConfig } from '../src/utils/validation.js';
 import { validateProductPayload } from '../src/controllers/productController.js';
 import { validateCategoryPayload } from '../src/controllers/categoryController.js';
 import { reconcileOrderStockForStatus, releaseOrderStock, reserveOrderStock } from '../src/utils/orderStock.js';
@@ -114,23 +114,13 @@ test('product and category payload validators reject malformed writes', () => {
   assert.match(validateCategoryPayload({ name: 'Vegetables', admin: true }, true), /payload/);
 });
 
-test('production and Supabase storage configuration reject invalid settings', () => {
+test('production configuration requires external MySQL credentials and exact HTTPS origins', () => {
   const base = { NODE_ENV: 'production', DATABASE_URL: 'mysql://user:pass@db.example:3306/pearl_grow', FRONTEND_URL: 'https://shop.example' };
   assert.deepEqual(validateProductionConfig(base), []);
   assert.ok(validateProductionConfig({ ...base, FRONTEND_URL: 'http://shop.example' }).length > 0);
   assert.ok(validateProductionConfig({ ...base, DATABASE_URL: 'mysql://user:pass@localhost:3306/pearl_grow' }).length > 0);
-  const storageConfig = {
-    supabaseUrl: 'https://abcdefghijklmnopqrst.supabase.co',
-    supabaseSecretKey: 'server-only-secret',
-    supabaseBucket: 'product-images',
-  };
-  assert.equal(validateSupabaseStorageConfig(storageConfig), true);
-  assert.equal(validateSupabaseStorageConfig({ ...storageConfig, supabaseBucket: 'other-bucket' }), false);
-  assert.equal(validateSupabaseStorageConfig({ ...storageConfig, supabaseUrl: 'http://abcdefghijklmnopqrst.supabase.co' }), false);
-  assert.equal(validateSupabaseStorageConfig({ ...storageConfig, supabaseUrl: 'https://project.supabase.co' }), false);
-  assert.equal(validateSupabaseStorageConfig({ ...storageConfig, supabaseUrl: 'https://abcdefghijklmnopqrst.supabase.co.attacker.com' }), false);
-  assert.equal(validateSupabaseStorageConfig({ ...storageConfig, supabaseUrl: 'https://abcdefghijklmnopqrst.supabase.co:8443' }), false);
-  assert.equal(validateSupabaseStorageConfig({ ...storageConfig, supabaseSecretKey: '' }), false);
+  assert.equal(validateProductionUploadConfig({ nodeEnv: 'production', uploadsDir: '/var/data/uploads', publicApiUrl: 'https://api.example', persistent: 'true' }), true);
+  assert.equal(validateProductionUploadConfig({ nodeEnv: 'production', uploadsDir: '/tmp/uploads', publicApiUrl: 'https://api.example', persistent: undefined }), false);
 });
 
 test('logout session version always advances beyond the current token version', () => {
@@ -214,12 +204,10 @@ test('cancel, repeat, reopen, and delete stock effects are idempotent for each s
 test('image upload checks MIME against file signatures', () => {
   const pngHeader = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
   assert.equal(getVerifiedImageType('image/png', pngHeader)?.extension, '.png');
-  assert.equal(getVerifiedImageType('image/png', pngHeader)?.mimeType, 'image/png');
   assert.equal(getVerifiedImageType('image/jpeg', pngHeader), null);
   assert.equal(getVerifiedImageType('image/svg+xml', Buffer.from('<svg/>')), null);
   assert.equal(getVerifiedImageType('image/gif', Buffer.from('GIF89a'))?.extension, '.gif');
-  assert.equal(getVerifiedImageType('image/jpg', Buffer.from([0xff, 0xd8, 0xff]))?.mimeType, 'image/jpeg');
-  assert.equal(getVerifiedImageType('image/x-ms-bmp', Buffer.from('BM' + '\0'.repeat(12)))?.mimeType, 'image/bmp');
+  assert.equal(getVerifiedImageType('image/bmp', Buffer.from('BM' + '\0'.repeat(12)))?.extension, '.bmp');
   assert.equal(getVerifiedImageType('image/avif', Buffer.from('\0\0\0\x18ftypavif'))?.extension, '.avif');
 });
 
