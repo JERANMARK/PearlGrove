@@ -1,21 +1,16 @@
+
 // API Service configuration and helper functions
 
 const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
-const isValidProductionApiUrl = (() => {
-  if (!configuredApiUrl) return false;
-  try {
-    const parsed = new URL(configuredApiUrl);
-    const localHost = ['localhost', '127.0.0.1', '::1'].includes(parsed.hostname) || parsed.hostname.endsWith('.localhost');
-    return parsed.protocol === 'https:' && parsed.pathname.replace(/\/$/, '') === '/api' && !parsed.search && !parsed.hash && !parsed.username && !parsed.password && !localHost;
-  } catch { return false; }
-})();
+
 const LOCAL_API_URL = 'http://localhost:5000/api';
-if (import.meta.env.PROD && !isValidProductionApiUrl) {
-  console.error('VITE_API_URL is missing or invalid in production. Configure the deployed backend API URL before redeploying the frontend.');
-}
-const API_BASE = import.meta.env.DEV
-  ? (configuredApiUrl || LOCAL_API_URL).replace(/\/$/, '')
-  : (configuredApiUrl || '/api').replace(/\/$/, '');
+
+// Production uses the same-origin Vercel proxy.
+// Development continues to use the configured local/backend API URL.
+const API_BASE = import.meta.env.PROD
+  ? '/api'
+  : (configuredApiUrl || LOCAL_API_URL).replace(/\/+$/, '');
+
 export const resolveApiImageUrl = (value?: string | null) => {
   if (!value) return '/images/Radish.jpg';
   if (/^https?:\/\//i.test(value)) return value;
@@ -56,7 +51,7 @@ export async function apiFetch<T>(
   retryCount: number = 0
 ): Promise<{ success: boolean; data?: T; error?: string; [key: string]: any }> {
   const url = `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-  
+
   const headers = {
     'Content-Type': 'application/json',
     'X-Request-ID': crypto.randomUUID(),
@@ -70,7 +65,7 @@ export async function apiFetch<T>(
     if (!res.ok) {
       // Check if this is a retryable error
       const isRetryable = RETRYABLE_STATUS_CODES.includes(res.status) && retryCount < MAX_RETRIES;
-      
+
       if (isRetryable) {
         const delay = RETRY_DELAY_MS * Math.pow(2, retryCount); // Exponential backoff
         await sleep(delay);
@@ -92,7 +87,7 @@ export async function apiFetch<T>(
   } catch (err: any) {
     // Check if this is a retryable network error
     const isRetryable = RETRYABLE_ERRORS.some(code => err.message?.includes(code)) && retryCount < MAX_RETRIES;
-    
+
     if (isRetryable) {
       const delay = RETRY_DELAY_MS * Math.pow(2, retryCount); // Exponential backoff
       await sleep(delay);
@@ -124,7 +119,7 @@ export const customerApi = {
     if (params?.category && params.category !== 'All') query.append('category', params.category);
     if (params?.search) query.append('search', params.search);
     if (params?.availableOnly) query.append('availableOnly', 'true');
-    
+
     return apiFetch<any[]>(`/products?${query.toString()}`);
   },
 
@@ -256,8 +251,7 @@ export const adminApi = {
 
     const res = await fetch(`${API_BASE}/admin/upload-image`, {
       method: 'POST',
-      headers: {
-      },
+      headers: {},
       body: formData,
       credentials: 'include',
     });
