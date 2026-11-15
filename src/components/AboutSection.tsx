@@ -24,7 +24,7 @@ const AboutSection = () => {
 
             <div className="space-y-5 max-w-[650px] pt-6">
               <p className="font-body text-forest-800 text-lg leading-relaxed">
-                Pearl Grove is a Sri Lankan fresh-produce brand created with a simple purpose — to grow fresh, high-quality produce with care and bring it closer to modern kitchens. We begin our journey with a carefully selected range of premium microgreens.
+                Pearl Grove is a Sri Lankan fresh produce brand created with a simple purpose to grow fresh, high-quality produce with care and bring it closer to modern kitchens. We begin our journey with a carefully selected range of premium microgreens.
               </p>
 
               <p className="font-body text-forest-800 text-lg leading-relaxed">
@@ -32,7 +32,7 @@ const AboutSection = () => {
               </p>
 
               <p className="font-body text-forest-800 text-lg leading-relaxed">
-                Our vision extends beyond microgreens. As the brand grows, we aim to expand into fresh vegetables, herbs and specialty produce — while staying connected to responsible growing practices and the natural character of Sri Lanka&apos;s hill country.
+                Our vision extends beyond microgreens. As the brand grows, we aim to expand into fresh vegetables, herbs and specialty produce  while staying connected to responsible growing practices and the natural character of Sri Lanka&apos;s hill country.
               </p>
             </div>
           </motion.div>

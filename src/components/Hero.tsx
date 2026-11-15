@@ -89,7 +89,7 @@ const Hero = () => {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="font-body text-cream-100/90 text-lg md:text-xl leading-relaxed max-w-xl"
             >
-              Premium hill-country grown microgreens for hotels, restaurants, cafés, chefs and modern kitchens.
+              Premium hill-country grown microgreens for hotels, restaurants, cafes, chefs and modern kitchens.
             </motion.p>
 
             {/* Feature Pills */}

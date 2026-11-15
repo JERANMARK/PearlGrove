@@ -96,7 +96,7 @@ const MicrogreensBeginning = () => {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="font-body text-cream-100/90 text-lg md:text-xl leading-relaxed mb-12 max-w-3xl mx-auto"
           >
-            Our long-term goal is to expand into fresh vegetables, herbs and specialty produce — while staying connected to responsible growing practices and the natural character of Sri Lanka's hill country.
+            Our long-term goal is to expand into fresh vegetables, herbs and specialty produce while staying connected to responsible growing practices and the natural character of Sri Lanka's hill country.
           </motion.p>
 
           {/* Feature cards */}

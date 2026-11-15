@@ -30,7 +30,7 @@ const Harvest = () => {
                 Our microgreens are harvested at the appropriate stage of growth to preserve their colour, texture, flavour and overall quality. Each batch is carefully harvested, handled and packed to stay fresh from our growing space to you.
               </p>
               <p>
-                For hotel, restaurant and café partners, we plan production according to demand — so you receive freshly harvested greens with consistent quality and reliable supply.
+                For hotel, restaurant and café partners, we plan production according to demand  so you receive freshly harvested greens with consistent quality and reliable supply.
               </p>
             </div>
 

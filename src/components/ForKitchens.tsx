@@ -65,7 +65,7 @@ const ForKitchens = () => {
             </div>
 
             <p className="font-body text-cream-100/85 text-base sm:text-lg leading-relaxed max-w-xl">
-              We aim to build reliable relationships with chefs, restaurants, hotels, cafés and purchasing teams that value freshness, presentation and consistent product quality.
+              We aim to build reliable relationships with chefs, restaurants, hotels, cafes and purchasing teams that value freshness, presentation and consistent product quality.
             </p>
 
             {/* 2x2 Feature Grid */}
