@@ -23,7 +23,7 @@ services:
       - key: FRONTEND_URL
         sync: false
       - key: WHATSAPP_NUMBER
-        value: "94715498142"
+        value: "94743498142"
       - key: UPLOADS_DIR
         sync: false
       - key: UPLOADS_PERSISTENT

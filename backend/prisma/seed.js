@@ -141,10 +141,10 @@ async function main() {
 
   // Seed business settings only when absent; preserve configured values.
   const settings = [
-    { key: 'whatsapp_number', value: '94715498142' },
+    { key: 'whatsapp_number', value: '94743498142' },
     { key: 'business_name', value: 'Pearl Grove' },
     { key: 'business_subname', value: 'MICROGREENS' },
-    { key: 'contact_phone', value: '071 549 8142' },
+    { key: 'contact_phone', value: '074 349 8142' },
     { key: 'contact_email', value: 'pearlgrovemicrogreens@gmail.com' },
     { key: 'location', value: 'Upcot, Maskeliya, Sri Lanka' },
     { key: 'currency_symbol', value: 'Rs.' },

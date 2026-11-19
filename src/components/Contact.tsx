@@ -170,15 +170,25 @@ Message: ${formData.message}`;
 
               <div className="pt-4">
                 <h3 className="font-display text-xl text-forest-900 font-semibold mb-4">Follow Us</h3>
-                <div className="flex gap-6">
-                  <div className="flex items-center gap-2 text-forest-700">
+                <div className="flex flex-wrap gap-6">
+                  <a
+                    href={brandData.social.instagram.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-forest-700 hover:text-leaf-600 transition-colors"
+                  >
                     <AtSign className="w-4 h-4" />
-                    <span className="font-body text-sm">Instagram - Coming soon</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-forest-700">
+                    <span className="font-body text-sm">Instagram - {brandData.social.instagram.name}</span>
+                  </a>
+                  <a
+                    href={brandData.social.facebook.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-forest-700 hover:text-leaf-600 transition-colors"
+                  >
                     <AtSign className="w-4 h-4" />
-                    <span className="font-body text-sm">Facebook - Coming soon</span>
-                  </div>
+                    <span className="font-body text-sm">Facebook - {brandData.social.facebook.name}</span>
+                  </a>
                 </div>
               </div>
             </motion.div>

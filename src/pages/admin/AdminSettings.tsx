@@ -22,10 +22,10 @@ export const AdminSettings: React.FC = () => {
   const [savingPassword, setSavingPassword] = useState(false);
 
   // Business Settings
-  const [whatsappNumber, setWhatsappNumber] = useState('94715498142');
+  const [whatsappNumber, setWhatsappNumber] = useState('94743498142');
   const [businessName, setBusinessName] = useState('Pearl Grove');
   const [businessSubname, setBusinessSubname] = useState('MICROGREENS');
-  const [contactPhone, setContactPhone] = useState('071 549 8142');
+  const [contactPhone, setContactPhone] = useState('074 349 8142');
   const [contactEmail, setContactEmail] = useState('pearlgrovemicrogreens@gmail.com');
   const [location, setLocation] = useState('Upcot, Maskeliya, Sri Lanka');
   const [currencySymbol, setCurrencySymbol] = useState('Rs.');
@@ -232,14 +232,14 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={whatsappNumber}
                   onChange={(e) => setWhatsappNumber(e.target.value)}
-                  placeholder="e.g. 94715498142"
+                  placeholder="e.g. 94743498142"
                   required
                   className="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500 font-mono"
                 />
                 <Phone className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
               </div>
               <p className="text-[10px] text-slate-400 mt-1">
-                Include country code without + or spaces (e.g. 94715498142 for Sri Lanka)
+                Include country code without + or spaces (e.g. 94743498142 for Sri Lanka)
               </p>
             </div>
 
@@ -281,7 +281,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={contactPhone}
                 onChange={(e) => setContactPhone(e.target.value)}
-                placeholder="071 549 8142"
+                placeholder="074 349 8142"
                 className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500"
               />
             </div>

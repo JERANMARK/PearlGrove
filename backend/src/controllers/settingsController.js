@@ -1,6 +1,13 @@
 import prisma from '../config/database.js';
 import { randomUUID } from 'crypto';
 
+const normalizePhoneSettings = (settingsObj) => {
+  if (settingsObj.whatsapp_number === '94715498142') settingsObj.whatsapp_number = '94743498142';
+  if (settingsObj.contact_phone === '071 549 8142') settingsObj.contact_phone = '074 349 8142';
+  if (settingsObj.contact_phone === '074 3498142' || settingsObj.contact_phone === '0743498142') settingsObj.contact_phone = '074 349 8142';
+  return settingsObj;
+};
+
 const ALLOWED_SETTING_KEYS = [
   'whatsapp_number',
   'business_name',
@@ -27,18 +34,20 @@ export const getPublicSettings = async (_req, res, next) => {
     settings.forEach(s => {
       settingsObj[s.key] = s.value;
     });
+    normalizePhoneSettings(settingsObj);
 
     // Provide default fallbacks matching brandData
     const result = {
-      whatsapp_number: settingsObj.whatsapp_number || process.env.WHATSAPP_NUMBER || '94715498142',
+      whatsapp_number: settingsObj.whatsapp_number || process.env.WHATSAPP_NUMBER || '94743498142',
       business_name: settingsObj.business_name || 'Pearl Grove',
       business_subname: settingsObj.business_subname || 'MICROGREENS',
-      contact_phone: settingsObj.contact_phone || '071 549 8142',
+      contact_phone: settingsObj.contact_phone || '074 349 8142',
       contact_email: settingsObj.contact_email || 'pearlgrovemicrogreens@gmail.com',
       location: settingsObj.location || 'Upcot, Maskeliya, Sri Lanka',
       currency_symbol: settingsObj.currency_symbol || 'Rs.',
       ...settingsObj
     };
+    normalizePhoneSettings(result);
 
     res.json({
       success: true,
@@ -54,6 +63,7 @@ export const getAdminSettings = async (req, res, next) => {
     settings.forEach(s => {
       settingsMap[s.key] = s.value;
     });
+    normalizePhoneSettings(settingsMap);
 
     res.json({
       success: true,

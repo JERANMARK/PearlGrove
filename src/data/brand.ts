@@ -4,10 +4,10 @@ export const brandData = {
   tagline: 'Fresh Greens. Healthier Living.',
   founder: 'Lavanya',
   location: 'Upcot, Maskeliya, Sri Lanka',
-  phone: '071 549 8142',
+  phone: '074 349 8142',
   email: 'pearlgrovemicrogreens@gmail.com',
-  whatsapp: 'https://wa.me/94715498142',
-  whatsappNumber: '94715498142',
+  whatsapp: 'https://wa.me/94743498142',
+  whatsappNumber: '94743498142',
   businessFocus: [
     'Hotels',
     'Restaurants',
@@ -141,12 +141,18 @@ export const brandData = {
     heading: "Let's Grow Something Fresh",
     founder: 'Lavanya',
     location: 'Upcot, Maskeliya, Sri Lanka',
-    phone: '071 549 8142',
+    phone: '074 349 8142',
     email: 'pearlgrovemicrogreens@gmail.com',
-    whatsapp: 'https://wa.me/94715498142'
+    whatsapp: 'https://wa.me/94743498142'
   },
   social: {
-    instagram: 'Coming Soon',
-    facebook: 'Coming Soon'
+    instagram: {
+      name: 'pearlgrove.lk',
+      url: 'https://www.instagram.com/pearlgrove.lk?jplx=bnc2MTBscXptcDZw'
+    },
+    facebook: {
+      name: 'pearlgrove',
+      url: 'https://www.facebook.com/share/1MU3n2tYW7/'
+    }
   }
 };
